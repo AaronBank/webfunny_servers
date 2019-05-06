@@ -11,8 +11,8 @@
 
 
 运行环境：
-    
-    安装nodejs环境， 
+    关于环境安装如果有问题，可以参考 [阿里云服务器搭建篇](https://zhuanlan.zhihu.com/p/35760691) 
+    安装nodejs 10.6.0 环境， 
     安装mysql数据库， 
     将config/db.js配置正确，以确保能够连接上mysql数据库
     
