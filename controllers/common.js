@@ -123,6 +123,7 @@ class Common {
    */
   static async searchBehaviorsRecord(ctx) {
     const param = JSON.parse(ctx.request.body)
+    param.userId = Utils.md5Encrypt(param.searchValue)
     param.happenTimeScope = new Date(Utils.addDays(0 - param.timeScope) + " 00:00:00").getTime()
     let customerKeyList = []
     let result1 = []
@@ -146,8 +147,8 @@ class Common {
     let customerKeySql = ""
     let webMonitorIdSql = "1=1" // " webMonitorId='" + param.webMonitorId + "' "
     let happenTimeSql = " happenTime>" + param.happenTimeScope + " "
-    let userIdSql = " userId='" + Utils.b64DecodeUnicode(param.searchValue) + "' "
-    let base64UserIdSql = " userId='" + param.searchValue + "' "
+    let userIdSql = " userId='" + Utils.md5Encrypt(Utils.b64DecodeUnicode(param.searchValue)) + "' "
+    let base64UserIdSql = " userId='" + Utils.md5Encrypt(param.searchValue) + "' "
     if (customerKeyList.length) {
       customerKeyList.forEach((customerKey, index) => {
         if (index === customerKeyList.length -1) {
@@ -201,6 +202,7 @@ class Common {
    */
   static async searchCustomerInfo(ctx) {
     const param = JSON.parse(ctx.request.body)
+    param.userId = Utils.md5Encrypt(param.searchValue)
     param.happenTimeScope = new Date(Utils.addDays(0 - param.timeScope) + " 00:00:00").getTime()
     let customerKeyList = []
     let pvCountList = null

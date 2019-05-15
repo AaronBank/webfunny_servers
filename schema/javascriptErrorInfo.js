@@ -63,6 +63,12 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true,
       field: 'city'
     },
+    // 信息类型
+    infoType: {
+      type: DataTypes.STRING(30),
+      allowNull: true,
+      field: 'infoType'
+    },
     // JS报错信息
     errorMessage: {
       type: DataTypes.TEXT,
@@ -97,11 +103,29 @@ module.exports = function (sequelize, DataTypes) {
         ]
       },
       {
+        name: "webMonitorIdIndex",
+        method: "BTREE",
+        fields: [
+          {
+            attribute: "webMonitorId"
+          }
+        ]
+      },
+      {
         name: "customerKeyIndex",
         method: "BTREE",
         fields: [
           {
             attribute: "customerKey"
+          }
+        ]
+      },
+      {
+        name: "infoTypeIndex",
+        method: "BTREE",
+        fields: [
+          {
+            attribute: "infoType"
           }
         ]
       },

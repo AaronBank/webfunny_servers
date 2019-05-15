@@ -128,10 +128,13 @@ router.get('/getJavascriptErrorInfoListByDay', JavascriptErrorInfo.getJavascript
 router.get('/getJavascriptErrorInfoListByHour', JavascriptErrorInfo.getJavascriptErrorInfoListByHour);
 // 根据JS错误数量进行分类排序
 router.post('/getJavascriptErrorSort', JavascriptErrorInfo.getJavascriptErrorSort);
+router.post('/getConsoleErrorSort', JavascriptErrorInfo.getConsoleErrorSort);
 // 获取最近24小时内，js错误发生数量
 router.get('/getJavascriptErrorCountByHour', JavascriptErrorInfo.getJavascriptErrorCountByHour);
-// 获取各种平台js报错熟练
+// 获取各种平台js报错数量
 router.get('/getJavascriptErrorCountByOs', JavascriptErrorInfo.getJavascriptErrorCountByOs);
+// 获取各种平台js分类报错数量
+router.get('/getJavascriptErrorCountByType', JavascriptErrorInfo.getJavascriptErrorCountByType);
 // 根据ErrorMsg获取js错误列表
 router.post('/getJavascriptErrorListByMsg', JavascriptErrorInfo.getJavascriptErrorListByMsg);
 // 根据ErrorMsg获取js错误列表

@@ -1,5 +1,6 @@
 require("./extension")
 const myAtob = require("atob")
+const crypto = require('crypto')
 module.exports = {
   isObject(obj) {
     return (Object.prototype.toString.call(obj) == '[object Object]');
@@ -92,9 +93,12 @@ module.exports = {
     }))
   },
   b64DecodeUnicode: function(str) {
-  return decodeURIComponent(myAtob(str).split('').map(function(c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
-}
-
+    return decodeURIComponent(myAtob(str).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+  },
+  md5Encrypt: function(encryptString) {
+    let hash = crypto.createHash('md5');
+    return hash.update(encryptString).digest('base64');
+  }
 }

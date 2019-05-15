@@ -113,7 +113,18 @@ class JavascriptErrorInfoModel {
     const { simpleUrl, timeType } = param
     const queryStr1 = simpleUrl ? " and simpleUrl='" + simpleUrl + "' " : " "
     const queryStr = queryStr1 + CommonSql.createTimeScopeSql(timeType)
-    const sql = "select errorMessage, count(errorMessage) as count from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' " + queryStr + " GROUP BY errorMessage order by count desc limit 0,15"
+    const sql = "select errorMessage, count(errorMessage) as count from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' and infoType='on_error' " + queryStr + " GROUP BY errorMessage order by count desc"
+    return await Sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT})
+  }
+  /**
+   * 获取自定义错误列表
+   * @returns {Promise<*>}
+   */
+  static async getConsoleErrorSort(param) {
+    const { simpleUrl, timeType } = param
+    const queryStr1 = simpleUrl ? " and simpleUrl='" + simpleUrl + "' " : " "
+    const queryStr = queryStr1 + CommonSql.createTimeScopeSql(timeType)
+    const sql = "select errorMessage, count(errorMessage) as count from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' and infoType='console_error' " + queryStr + " GROUP BY errorMessage order by count desc"
     return await Sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT})
   }
   /**
@@ -126,6 +137,16 @@ class JavascriptErrorInfoModel {
     const queryStr = queryStr1 + CommonSql.createTimeScopeSql(timeType)
     const errorMsg = tempErrorMsg.replace(/'/g, "\\'")
     return await Sequelize.query("SELECT tab.os as os, count(tab.os) as count from (select SUBSTRING(os,1,3) as os from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' " + queryStr + " and  errorMessage like '%" + errorMsg + "%') as tab GROUP BY os order by count desc", { type: Sequelize.QueryTypes.SELECT})
+  }
+
+  /**
+   * 查询分类js错误的数量
+   * @returns {Promise.<void>}
+   */
+  static async getJavascriptErrorCountByType( param ) {
+    const { timeType } = param
+    const queryStr = CommonSql.createTimeScopeSql(timeType)
+    return await Sequelize.query("select infoType, count(infoType) as count from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' " + queryStr + " GROUP BY infoType", { type: Sequelize.QueryTypes.SELECT})
   }
   /**
    * 根据errorMessage查询这一类错误最近发生的时间
@@ -179,7 +200,7 @@ class JavascriptErrorInfoModel {
    */
   static async getJavascriptErrorListByPage(param) {
     const { timeType } = param
-    const queryStr = " where webMonitorId='" + param.webMonitorId + "' " + CommonSql.createTimeScopeSql(timeType)
+    const queryStr = " where webMonitorId='" + param.webMonitorId + "' and infoType='on_error' " + CommonSql.createTimeScopeSql(timeType)
     return await Sequelize.query("select simpleUrl, COUNT(simpleUrl) as count from JavascriptErrorInfos " + queryStr + " GROUP BY simpleUrl ORDER BY count desc", { type: Sequelize.QueryTypes.SELECT})
   }
 

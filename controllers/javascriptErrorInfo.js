@@ -107,6 +107,30 @@ class JavascriptErrorInfoController {
   }
 
   /**
+   * 根据JS错误的数量进行排序
+   * @param ctx
+   * @returns {Promise.<void>}
+   */
+  static async getConsoleErrorSort(ctx) {
+    const param = JSON.parse(ctx.request.body)
+    let errorSortList = []
+    await JavascriptErrorInfoModel.getConsoleErrorSort(param).then(data => {
+      errorSortList = data
+    })
+    for (let i = 0; i < errorSortList.length; i ++) {
+      await JavascriptErrorInfoModel.getJavascriptErrorLatestTime(errorSortList[i].errorMessage, param).then(data => {
+        errorSortList[i].createdAt = data[0].createdAt
+        errorSortList[i].happenTime = data[0].happenTime
+      })
+      await JavascriptErrorInfoModel.getPerJavascriptErrorCountByOs(errorSortList[i].errorMessage, param).then(data => {
+        errorSortList[i].osInfo = data
+      })
+    }
+    ctx.response.status = 200;
+    ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', errorSortList)
+  }
+
+  /**
    * 查询最近六小时内JS错误的数量信息
    * @param ctx
    * @returns {Promise.<void>}
@@ -155,6 +179,21 @@ class JavascriptErrorInfoController {
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', result);
     })
+  }
+  /**
+   * 查询分类js错误的数量
+   * @param ctx
+   * @returns {Promise.<void>}
+   */
+  static async getJavascriptErrorCountByType(ctx) {
+    const param = utils.parseQs(ctx.request.url)
+    const {day} = param;
+    param.day = utils.addDays(0 - day) + " 00:00:00"
+    await JavascriptErrorInfoModel.getJavascriptErrorCountByType(param).then(data => {
+      ctx.response.status = 200;
+      ctx.body = statusCode.SUCCESS_200('查询信息成功！', data);
+    })
+
   }
   /**
    * 根据errorMsg查询Js错误列表

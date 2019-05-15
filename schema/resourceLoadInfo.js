@@ -43,6 +43,15 @@ module.exports = function (sequelize, DataTypes) {
         ]
       },
       {
+        name: "webMonitorIdIndex",
+        method: "BTREE",
+        fields: [
+          {
+            attribute: "webMonitorId"
+          }
+        ]
+      },
+      {
         name: "customerKeyIndex",
         method: "BTREE",
         fields: [
