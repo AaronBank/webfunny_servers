@@ -127,6 +127,7 @@ class ProjectController {
                   });
                 data.monitorCode = monitorCode
                 data.projectType = "customer"
+                data.remotePath = "//www.webfunny.cn/resource/monitor.fetch.min.js?id=" + webMonitorId
                 await ProjectModel.createProject(data);
                 ctx.response.status = 200;
                 ctx.body = statusCode.SUCCESS_200('创建信息成功', data)

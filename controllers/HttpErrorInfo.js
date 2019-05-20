@@ -1,7 +1,7 @@
-const HttpLogInfoModel = require('../modules/HttpLogInfo')
+const HttpErrorInfoModel = require('../modules/HttpErrorInfo')
 const statusCode = require('../util/status-code')
-const utils = require('../util/utils');
-class HttpLogInfoController {
+const Utils = require('../util/utils');
+class HttpErrorInfoController {
   /**
    * 创建信息
    * @param ctx
@@ -12,8 +12,8 @@ class HttpLogInfoController {
     const data = JSON.parse(param.data)
     /* 判断参数是否合法 */
     if (req.happenTime) {
-      let ret = await HttpLogInfoModel.createHttpLogInfo(data);
-      let res = await HttpLogInfoModel.getHttpLogInfoDetail(ret.id);
+      let ret = await HttpErrorInfoModel.createHttpErrorInfo(data);
+      let res = await HttpErrorInfoModel.getHttpErrorInfoDetail(ret.id);
   
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('创建信息成功', res)
@@ -28,11 +28,11 @@ class HttpLogInfoController {
    * @param ctx
    * @returns {Promise.<void>}
    */
-  static async getHttpLogInfoList(ctx) {
+  static async getHttpErrorInfoList(ctx) {
     let req = ctx.request.body
   
     if (req) {
-      const data = await HttpLogInfoModel.getHttpLogInfoList();
+      const data = await HttpErrorInfoModel.getHttpErrorInfoList();
   
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', data)
@@ -53,7 +53,7 @@ class HttpLogInfoController {
     let id = ctx.params.id;
   
     if (id) {
-      let data = await HttpLogInfoModel.getHttpLogInfoDetail(id);
+      let data = await HttpErrorInfoModel.getHttpErrorInfoDetail(id);
   
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('查询成功！', data)
@@ -74,7 +74,7 @@ class HttpLogInfoController {
     let id = ctx.params.id;
   
     if (id && !isNaN(id)) {
-      await HttpLogInfoModel.deleteHttpLogInfo(id);
+      await HttpErrorInfoModel.deleteHttpErrorInfo(id);
   
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('删除信息成功！')
@@ -95,8 +95,8 @@ class HttpLogInfoController {
     let id = ctx.params.id;
   
     if (req) {
-      await HttpLogInfoModel.updateHttpLogInfo(id, req);
-      let data = await HttpLogInfoModel.getHttpLogInfoDetail(id);
+      await HttpErrorInfoModel.updateHttpErrorInfo(id, req);
+      let data = await HttpErrorInfoModel.getHttpErrorInfoDetail(id);
   
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('更新信息成功！', data);
@@ -107,19 +107,20 @@ class HttpLogInfoController {
     }
   }
 
+
   /**
    * 根据时间获取一天内http请求错误的数量信息
    * @param ctx
    * @returns {Promise.<void>}
    */
   static async getHttpErrorInfoListByHour(ctx) {
-    const param = utils.parseQs(ctx.request.url)
+    const param = Utils.parseQs(ctx.request.url)
     let result1 = []
-    await HttpLogInfoModel.getHttpErrorInfoListByHour(param).then(data => {
+    await HttpErrorInfoModel.getHttpErrorInfoListByHour(param).then(data => {
       result1 = data;
     })
     let result2 = []
-    await HttpLogInfoModel.getHttpErrorInfoListSevenDayAgoByHour(param).then(data => {
+    await HttpErrorInfoModel.getHttpErrorInfoListSevenDayAgoByHour(param).then(data => {
       result2 = data;
     })
     ctx.response.status = 200;
@@ -132,11 +133,11 @@ class HttpLogInfoController {
    * @returns {Promise.<void>}
    */
   static async getHttpErrorCountByDay(ctx) {
-    const param = utils.parseQs(ctx.request.url)
-    await HttpLogInfoModel.getHttpErrorCountByDay(param).then(data => {
+    const param = Utils.parseQs(ctx.request.url)
+    await HttpErrorInfoModel.getHttpErrorCountByDay(param).then(data => {
       if (data) {
         ctx.response.status = 200;
-        ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', data)
+        ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', Utils.handleDateResult(data))
       } else {
         ctx.response.status = 412;
         ctx.body = statusCode.ERROR_412('查询信息列表失败！');
@@ -151,24 +152,24 @@ class HttpLogInfoController {
   static async getHttpErrorListByDay(ctx) {
 
     const param = JSON.parse(ctx.request.body)
-    let resourceErrorSortList = null
-    await HttpLogInfoModel.getResourceLoadInfoListByDay(param).then(data => {
-      resourceErrorSortList = data
+    let httpErrorSortList = null
+    await HttpErrorInfoModel.getHttpErrorInfoListByDay(param).then(data => {
+      httpErrorSortList = data
     })
-    for (let i = 0; i < resourceErrorSortList.length; i ++) {
+    for (let i = 0; i < httpErrorSortList.length; i ++) {
       // 查询最近发生时间
-      await HttpLogInfoModel.getResourceErrorLatestTime(resourceErrorSortList[i].sourceUrl, param).then(data => {
-        resourceErrorSortList[i].createdAt = data[0].createdAt
-        resourceErrorSortList[i].happenTime = data[0].happenTime
+      await HttpErrorInfoModel.getHttpErrorLatestTime(httpErrorSortList[i].simpleHttpUrl, param).then(data => {
+        httpErrorSortList[i].createdAt = data[0].createdAt
+        httpErrorSortList[i].happenTime = data[0].happenTime
       })
       // 查询不同状态的次数
-      await HttpLogInfoModel.getPageCountByResourceError(resourceErrorSortList[i].sourceUrl, param).then(data => {
-        resourceErrorSortList[i].pageCount = data[0].pageCount
+      await HttpErrorInfoModel.getStatusCountBySimpleHttpUrl(httpErrorSortList[i].simpleHttpUrl, param).then(data => {
+        httpErrorSortList[i].statusArray = data[0]
       })
     }
     ctx.response.status = 200;
-    ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', resourceErrorSortList)
+    ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', httpErrorSortList)
   }
 }
 
-module.exports = HttpLogInfoController
+module.exports = HttpErrorInfoController

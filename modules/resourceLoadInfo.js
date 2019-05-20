@@ -87,7 +87,7 @@ class ResourceLoadInfoModel {
     const { simpleUrl, timeType } = param
     const queryStr1 = simpleUrl ? " and simpleUrl='" + simpleUrl + "' " : " "
     const queryStr = queryStr1 + CommonSql.createTimeScopeSql(timeType)
-    const sql = "select sourceUrl, COUNT(sourceUrl) as count from ResourceLoadInfos where webMonitorId='" + param.webMonitorId + "' " + queryStr + " GROUP BY sourceUrl order by count desc"
+    const sql = "select sourceUrl, COUNT(sourceUrl) as count from ResourceLoadInfos where webMonitorId='" + param.webMonitorId + "' " + queryStr + " GROUP BY sourceUrl order by count desc limit 20"
     return await Sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT})
   }
 

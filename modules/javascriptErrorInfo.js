@@ -113,7 +113,7 @@ class JavascriptErrorInfoModel {
     const { simpleUrl, timeType } = param
     const queryStr1 = simpleUrl ? " and simpleUrl='" + simpleUrl + "' " : " "
     const queryStr = queryStr1 + CommonSql.createTimeScopeSql(timeType)
-    const sql = "select errorMessage, count(errorMessage) as count from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' and infoType='on_error' " + queryStr + " GROUP BY errorMessage order by count desc"
+    const sql = "select errorMessage, count(errorMessage) as count from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' and infoType='on_error' " + queryStr + " GROUP BY errorMessage order by count desc limit 20"
     return await Sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT})
   }
   /**
@@ -201,7 +201,7 @@ class JavascriptErrorInfoModel {
   static async getJavascriptErrorListByPage(param) {
     const { timeType } = param
     const queryStr = " where webMonitorId='" + param.webMonitorId + "' and infoType='on_error' " + CommonSql.createTimeScopeSql(timeType)
-    return await Sequelize.query("select simpleUrl, COUNT(simpleUrl) as count from JavascriptErrorInfos " + queryStr + " GROUP BY simpleUrl ORDER BY count desc", { type: Sequelize.QueryTypes.SELECT})
+    return await Sequelize.query("select simpleUrl, COUNT(simpleUrl) as count from JavascriptErrorInfos " + queryStr + " GROUP BY simpleUrl ORDER BY count desc limit 20", { type: Sequelize.QueryTypes.SELECT})
   }
 
   /**

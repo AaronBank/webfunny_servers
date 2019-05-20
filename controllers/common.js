@@ -239,7 +239,6 @@ class Common {
         ipPath = "http://ip.taobao.com/service/getIpInfo.php?ip=" + cusDetail.monitorIp
       }
       let currentDateTime = new Date().getTime()
-      console.log("个人信息获取时间：", currentDateTime - startDateTime)
       startDateTime = currentDateTime
     })
     if (ipPath) {
@@ -266,15 +265,19 @@ class Common {
     await CustomerPVModel.getPVsByCustomerKey(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
       pvCountList = res
       let currentDateTime = new Date().getTime()
-      console.log("PVcount获取时间：", currentDateTime - startDateTime)
       startDateTime = currentDateTime
     })
 
     await LoadPageModel.getPageLoadTimeByCustomerKey(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
       loadPageTimeList = res
       let currentDateTime = new Date().getTime()
-      console.log("loadPage获取时间：", currentDateTime - startDateTime)
       startDateTime = currentDateTime
+    })
+
+    // 获取浏览器信息
+    await LoadPageModel.getLoadPageInfoByCustomerKey(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
+      console.log(res[0])
+      cusDetail.browserInfo = res[0].browserInfo
     })
     ctx.response.status = 200;
     ctx.body = statusCode.SUCCESS_200('创建信息成功', {pvCountList, loadPageTimeList, cusDetail})

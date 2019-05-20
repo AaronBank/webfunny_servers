@@ -146,7 +146,7 @@ class ResourceLoadInfoController {
     await ResourceLoadInfoModel.getResourceErrorCountByDay(param).then(data => {
       if (data) {
         ctx.response.status = 200;
-        ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', data)
+        ctx.body = statusCode.SUCCESS_200('查询信息列表成功！', utils.handleDateResult(data))
       } else {
         ctx.response.status = 412;
         ctx.body = statusCode.ERROR_412('查询信息列表失败！');

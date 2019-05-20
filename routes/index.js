@@ -9,7 +9,8 @@ const CustomerPVController = require('../controllers/customerPV')
 const LoadPageController = require('../controllers/loadPageInfo')
 const ExtendBehaviorInfo = require('../controllers/extendBehaviorInfo')
 const ResourceLoadInfo = require('../controllers/resourceLoadInfo')
-const HttpLogInfo = require('../controllers/HttpLogInfo')
+// const HttpLogInfo = require('../controllers/HttpLogInfo')
+const HttpErrorInfo = require('../controllers/HttpErrorInfo')
 const CommonController = require('../controllers/common')
 const router = new Router({
     prefix: '/server'
@@ -182,14 +183,18 @@ router.get('/getResourceErrorCountByHour', ResourceLoadInfo.getResourceErrorCoun
 
 
 /**
- * 静态资源加载状态接口
+ * 接口请求报错相关接口
  */
-// 获取静态资源错误分类
-router.get('/getHttpErrorCountByHour', HttpLogInfo.getHttpErrorInfoListByHour);
+// 获取接口请求出错的实时数据量
+router.get('/getHttpErrorCountByHour', HttpErrorInfo.getHttpErrorInfoListByHour);
+// 获取每天的接口请求出错的数据量
+router.get('/getHttpErrorCountByDay', HttpErrorInfo.getHttpErrorCountByDay);
+// 获取每天的出错的接口请求列表
+router.post('/getHttpErrorListByDay', HttpErrorInfo.getHttpErrorListByDay);
 
 
 
-// 获取静态资源错误分类
+// 创建新的监控项目
 router.post('/createNewProject', ProjectController.createNewProject);
 
 

@@ -78,6 +78,14 @@ class LoadPageInfoModel {
   }
 
   /**
+   * 根据customerKey获取用户访问每个页面的平均请求时间，判断网络状态
+   */
+  static async getLoadPageInfoByCustomerKey(webMonitorIdSql, customerKeySql, happenTimeSql) {
+    let sql = "SELECT * from LoadPageInfos where " + happenTimeSql + "and" + customerKeySql + " and " + webMonitorIdSql
+    return await Sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT})
+  }
+
+  /**
    * 根据时间获取当日页面加载的平均时间
    */
   static async getPageLoadTimeByDate(param) {
