@@ -70,7 +70,7 @@ class JavascriptErrorInfoModel {
   static async getJavascriptErrorInfoListByHour(param) {
     const sql = "SELECT DATE_FORMAT(createdAt,'%m-%d %H') AS hour, COUNT(id) AS count " +
                 "FROM JavascriptErrorInfos " +
-                "WHERE webMonitorId='" + param.webMonitorId + "' and DATE_FORMAT(NOW() - INTERVAL 23 HOUR, '%Y-%m-%d %H') <= createdAt " +
+                "WHERE webMonitorId='" + param.webMonitorId + "' and infoType='on_error' and DATE_FORMAT(NOW() - INTERVAL 23 HOUR, '%Y-%m-%d %H') <= createdAt " +
                 "GROUP BY HOUR"
     // return await Sequelize.query("SELECT COUNT(*) as count from JavascriptErrorInfos where  webMonitorId='" + param.webMonitorId + "' and  createdAt > '" + startTime + "' and createdAt < '" + endTime + "'", { type: Sequelize.QueryTypes.SELECT})
     return await Sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT})
@@ -91,7 +91,7 @@ class JavascriptErrorInfoModel {
     }
     const sql = "SELECT DATE_FORMAT(createdAt,'%m-%d %H') AS hour, COUNT(id) AS count " +
       "FROM JavascriptErrorInfos " +
-      "WHERE webMonitorId='" + param.webMonitorId + "' and createdAt<'" + sevenDayAgo + "' and DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 7 DAY) - INTERVAL 23 HOUR, '%Y-%m-%d %H') <= createdAt " +
+      "WHERE webMonitorId='" + param.webMonitorId + "' and infoType='on_error' and createdAt<'" + sevenDayAgo + "' and DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 7 DAY) - INTERVAL 23 HOUR, '%Y-%m-%d %H') <= createdAt " +
       "GROUP BY HOUR"
     // return await Sequelize.query("SELECT COUNT(*) as count from JavascriptErrorInfos where  webMonitorId='" + param.webMonitorId + "' and  createdAt > '" + startTime + "' and createdAt < '" + endTime + "'", { type: Sequelize.QueryTypes.SELECT})
     return await Sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT})

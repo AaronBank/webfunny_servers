@@ -6,6 +6,7 @@ const LoadPageModel = require('../modules/loadPageInfo')
 const IgnoreErrorModel = require('../modules/ignoreError')
 const ScreenShotInfoModel = require('../modules/ScreenShotInfo')
 const HttpLogInfoModel = require('../modules/HttpLogInfo')
+const HttpErrorInfoModel = require('../modules/HttpErrorInfo')
 const ExtendBehaviorInfoModel = require('../modules/extendBehaviorInfo')
 const ResourceLoadInfo = require('../modules/resourceLoadInfo')
 const statusCode = require('../util/status-code')
@@ -179,6 +180,9 @@ class Common {
     await HttpLogInfoModel.getHttpLogsByUser(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
       result5 = res
     })
+    await HttpErrorInfoModel.getHttpErrorsByUser(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
+      result5 = res
+    })
     await ExtendBehaviorInfoModel.getExtendBehaviorInfoByUserId(happenTimeSql, userIdSql).then((res) => {
       result6 = res
     })
@@ -276,7 +280,6 @@ class Common {
 
     // 获取浏览器信息
     await LoadPageModel.getLoadPageInfoByCustomerKey(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
-      console.log(res[0])
       cusDetail.browserInfo = res[0].browserInfo
     })
     ctx.response.status = 200;
