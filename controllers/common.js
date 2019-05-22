@@ -134,6 +134,7 @@ class Common {
     let result5 = []
     let result6 = []
     let result7 = []
+    let result8 = []
     let result = []
     let startDateTime = new Date().getTime()
     // 查询当前用户的customerKey列表
@@ -180,17 +181,18 @@ class Common {
     await HttpLogInfoModel.getHttpLogsByUser(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
       result5 = res
     })
-    await HttpErrorInfoModel.getHttpErrorsByUser(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
-      result5 = res
-    })
     await ExtendBehaviorInfoModel.getExtendBehaviorInfoByUserId(happenTimeSql, userIdSql).then((res) => {
       result6 = res
+      console.log(result6)
     })
     await ResourceLoadInfo.getResourceLoadInfoByUserId(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
       result7 = res
     })
+    await HttpErrorInfoModel.getHttpErrorsByUser(webMonitorIdSql, customerKeySql, happenTimeSql).then((res) => {
+      result8 = res
+    })
 
-    result = result.concat(result1, result2, result3, result5, result6, result7)
+    result = result.concat(result1, result2, result3, result5, result6, result7, result8)
     result4.forEach((item) => {
       item.screenInfo = (item.screenInfo || "").toString()
       result.push(item)

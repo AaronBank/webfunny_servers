@@ -60,7 +60,7 @@ class JavascriptErrorInfoModel {
    * @returns {Promise<*>}
    */
   static async getJavascriptErrorInfoListByDay(param) {
-    return await Sequelize.query("select DATE_FORMAT(createdAt,'%Y-%m-%d') as day, count(id) as count from JavascriptErrorInfos WHERE webMonitorId='" + param.webMonitorId + "' and DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= createdAt GROUP BY day", { type: Sequelize.QueryTypes.SELECT})
+    return await Sequelize.query("select DATE_FORMAT(createdAt,'%Y-%m-%d') as day, count(id) as count from JavascriptErrorInfos WHERE webMonitorId='" + param.webMonitorId + "' and infoType='on_error' and DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= createdAt GROUP BY day", { type: Sequelize.QueryTypes.SELECT})
   }
 
   /**
@@ -124,7 +124,7 @@ class JavascriptErrorInfoModel {
     const { simpleUrl, timeType } = param
     const queryStr1 = simpleUrl ? " and simpleUrl='" + simpleUrl + "' " : " "
     const queryStr = queryStr1 + CommonSql.createTimeScopeSql(timeType)
-    const sql = "select errorMessage, count(errorMessage) as count from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' and infoType='console_error' " + queryStr + " GROUP BY errorMessage order by count desc"
+    const sql = "select errorMessage, count(errorMessage) as count from JavascriptErrorInfos where webMonitorId='" + param.webMonitorId + "' and infoType='console_error' " + queryStr + " GROUP BY errorMessage order by count desc limit 20"
     return await Sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT})
   }
   /**
